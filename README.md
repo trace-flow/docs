@@ -40,8 +40,19 @@ chips: Postgres, Supabase
 | `summary` | The line under the headline, and the text on the landing tile |
 | `chips` | Optional "built with" labels, separated by commas |
 
-Each `##` section becomes a stop on the thread down the page. Lists inside `<div class="module-list">` become
-cards, and `<em class="pro">Pro</em>` marks a Pro feature.
+Each `##` section becomes a stop on the thread down the page.
+
+Besides Markdown, a page can use ready-made visual blocks written as plain HTML (no blank lines inside a block):
+
+| Block | Markup |
+|---|---|
+| Stat tiles | `<div class="facts"><div class="fact tone-teal"><b>One</b><span>…</span></div></div>` |
+| Icon cards | `<div class="cards chip-coral"><div class="card" data-icon="list"><b>Title</b><p>…</p></div></div>` |
+| Request or "where it fits" flow | `<div class="flow"><div class="step">…</div></div>`, or `<div data-fit></div>` for the shared strip |
+| Side-by-side demos, mock screens, phone, plans, steps, callouts | see the examples in `content/` |
+
+`data-icon` takes a name from `ICONS` in `build.mjs`. `{{modules}}` in text is replaced by the number of
+`class="card module"` cards on the page, and `<em class="pro">Pro</em>` marks a Pro feature.
 
 ## Build it locally
 

@@ -50,6 +50,51 @@ function render(src) {
   return { toc, html: md.parse(src) };
 }
 
+/** Line icons on a 24px grid. Any element written with data-icon="name" gets its icon as the first child. */
+const ICONS = {
+  users: '<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17.5" cy="9" r="2.4"/><path d="M17 14.2c2.4.2 4 2.1 4 4.8"/>',
+  folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  list: '<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/>',
+  loop: '<path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v4.5h-4.5"/>',
+  flag: '<path d="M5 21V4"/><path d="M5 5h12l-2 4 2 4H5"/>',
+  check: '<rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="m8 12.5 3 3 5-6"/>',
+  branch: '<circle cx="6" cy="5.5" r="2.2"/><circle cx="6" cy="18.5" r="2.2"/><circle cx="18" cy="9" r="2.2"/><path d="M6 7.7v8.6M18 11.2c0 3.5-4 3-10.5 5.5"/>',
+  clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  chat: '<path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H10l-4.5 3.5V17H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/>',
+  bell: '<path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/>',
+  flask: '<path d="M9.5 3.5h5M10.5 3.5v6L5 19a1.5 1.5 0 0 0 1.3 2.2h11.4A1.5 1.5 0 0 0 19 19l-5.5-9.5v-6"/><path d="M8 15h8"/>',
+  alert: '<path d="M12 4 2.8 19.5h18.4z"/><path d="M12 10v4.5M12 17.2v.1"/>',
+  link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  file: '<path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/>',
+  history: '<path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5M12 8v4.5l3 1.5"/>',
+  grid: '<rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/>',
+  chart: '<path d="M5 20v-7M12 20V5M19 20v-10"/>',
+  lock: '<rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/>',
+  mail: '<rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/>',
+  upload: '<path d="M12 16V5M7.5 9.5 12 5l4.5 4.5"/><path d="M4 16v3h16v-3"/>',
+  play: '<circle cx="12" cy="12" r="8.5"/><path d="m10 8.5 5 3.5-5 3.5z"/>',
+  phone: '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>',
+  globe: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c3 3 3 14 0 17M12 3.5c-3 3-3 14 0 17"/>',
+  layers: '<path d="m12 3.5 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>',
+  shield: '<path d="M12 3 5 6v5.5c0 4.5 3 7.7 7 9.5 4-1.8 7-5 7-9.5V6z"/><path d="m9 12 2.2 2.2L15.5 10"/>',
+  zap: '<path d="M13 3 5 13.5h6L10 21l8-10.5h-6z"/>',
+  tag: '<path d="M3.5 12.5v-8h8l9 9-8 8z"/><circle cx="8" cy="9" r="1.2"/>',
+  eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>',
+  sparkle: '<path d="M12 3.5 14 10l6.5 2-6.5 2-2 6.5-2-6.5-6.5-2 6.5-2z"/>',
+};
+const withIcons = (html) => html.replace(/(<[a-z]+\b[^>]*?\sdata-icon="([a-z-]+)"[^>]*>)/g, (_, open, name) => {
+  if (!ICONS[name]) throw new Error(`unknown icon "${name}"`);
+  return `${open}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name]}</svg>`;
+});
+
+/** "Where it fits": the same strip on every component page, with the current component ringed. */
+function fit(slug, pages) {
+  const tone = (s) => pages.find((p) => p.slug === s)?.tone ?? "quiet";
+  const node = (s, small, label) => `<a class="step tone-${tone(s)}${s === slug ? " here" : ""}" href="${s}.html"><small>${small}</small>${label}</a>`;
+  if (slug === "website") return `<div class="flow fit">${node("website", "Public site", "Website")}${node("web", "Sign up and sign in", "Web app")}</div>`;
+  return `<div class="flow fit"><div class="col">${node("web", "Browser", "Web app")}${node("android", "Phone", "Android app")}</div>${node("api", "/api", "API")}${node("database", "Supabase", "Database")}</div>`;
+}
+
 const wrapTables = (html) => html.replace(/<table\b/g, '<div class="table-wrap"><table').replace(/<\/table>/g, "</table></div>");
 
 /** Each second-level section becomes a stop on the thread that runs down the page. */
@@ -92,8 +137,11 @@ ${body}
 `;
 }
 
-function contentPage(page, nav) {
-  const { toc, html } = render(page.body);
+function contentPage(page, nav, pages) {
+  const { toc, html: rendered } = render(page.body);
+  // {{modules}} is the number of module cards on the page, so a figure in the text can never drift from the cards.
+  const modules = (rendered.match(/class="card module/g) ?? []).length;
+  const html = withIcons(rendered.replaceAll("{{modules}}", String(modules)).replace("<div data-fit></div>", fit(page.slug, pages)));
   const chips = page.chips.length ? `<ul class="chips" aria-label="Built with">${page.chips.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>` : "";
   const body = `<section class="head tone-${page.tone}">
   <p class="eyebrow">${esc(page.label)}</p>
@@ -102,7 +150,7 @@ function contentPage(page, nav) {
   ${chips}
 </section>
 <article class="doc surface">${intoStops(wrapTables(html))}</article>`;
-  return { html: layout({ slug: page.slug, title: page.title, body, nav, toc, description: page.summary }), rendered: html };
+  return { html: layout({ slug: page.slug, title: page.title, body, nav, toc, description: page.summary }), modules };
 }
 
 /** What traceability is, drawn with the app's own status colours. */
@@ -169,8 +217,8 @@ await cp(path.join(root, "assets"), path.join(dist, "assets"), { recursive: true
 
 let moduleCount = 0;
 for (const page of pages) {
-  const { html, rendered } = contentPage(page, nav);
-  if (page.slug === "product") moduleCount = [...rendered.matchAll(/<div class="module-list">([\s\S]*?)<\/div>/g)].reduce((n, m) => n + (m[1].match(/<li>/g) ?? []).length, 0);
+  const { html, modules } = contentPage(page, nav, pages);
+  if (page.slug === "product") moduleCount = modules;
   await writeFile(path.join(dist, `${page.slug}.html`), html);
 }
 await writeFile(path.join(dist, "index.html"), landing(pages, nav, moduleCount));
