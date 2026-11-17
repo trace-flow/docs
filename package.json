@@ -1,0 +1,12 @@
+{
+  "name": "trace-flow-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "serve": "node build.mjs && npx --yes serve@14 dist -l 4300"
+  },
+  "dependencies": {
+    "marked": "^18.2.1"
+  }
+}
