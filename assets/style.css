@@ -232,8 +232,8 @@ main.with-toc { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap:
 .flow > * { position: relative; flex: 1 1 0; min-width: 0; }
 .flow > * + *::before { content: "→"; position: absolute; left: -22px; top: 50%; transform: translateY(-50%); color: var(--ink-faint); font-weight: 700; }
 .flow .col { display: flex; flex-direction: column; gap: 8px; }
-.flow .step { display: flex; flex-direction: column; justify-content: center; gap: 2px; padding: 14px 16px; border-radius: 14px; font-weight: 700; text-decoration: none; color: inherit; }
-.flow .step:not([class*="tone-"]) { background: var(--sunken); }
+.flow .step { display: flex; flex-direction: column; justify-content: center; gap: 2px; padding: 14px 16px; border-radius: 14px; font-weight: 700; text-decoration: none; }
+.flow .step:not([class*="tone-"]), .flow .step.tone-paper, .flow .step.tone-quiet { background: var(--sunken); color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line-strong); }
 .flow .step small { font: 600 .68rem/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; opacity: .7; }
 .flow .step.here { outline: 2.5px solid var(--ink); outline-offset: 2px; }
 .flow a.step:hover { outline: 2px solid var(--ink); outline-offset: 2px; }
@@ -353,11 +353,11 @@ main.with-toc { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap:
 /* Trace graph */
 .graph { margin: 1.4em 0; background: var(--sunken); border-radius: 20px; padding: 18px; overflow-x: auto; }
 .graph svg { display: block; width: 100%; min-width: 560px; height: auto; }
-.graph .ln { stroke: var(--line-strong); stroke-width: 2.5; fill: none; }
-.graph .ln.on { stroke: var(--teal); }
-.graph .sat { fill: var(--card); stroke: var(--line-strong); stroke-width: 1.5; }
+.graph .ln { stroke: var(--ink-faint); stroke-opacity: .6; stroke-width: 2.5; fill: none; }
+.graph .ln.on { stroke: var(--teal); stroke-opacity: 1; }
+.graph .sat { fill: var(--card); stroke: var(--ink-faint); stroke-width: 1.5; }
 .graph .n-coral { fill: var(--tile-coral-bg); } .graph .n-amber { fill: var(--tile-amber-bg); }
-.graph .n-teal { fill: var(--tile-teal-bg); } .graph .n-ink { fill: var(--tile-ink-bg); }
+.graph .n-teal { fill: var(--tile-teal-bg); } .graph .n-ink { fill: var(--tile-ink-bg); stroke: var(--ink-faint); stroke-width: 1.5; }
 .graph .t { font: 700 15px var(--sans); text-anchor: middle; }
 .graph .t-coral { fill: var(--tile-coral-fg); } .graph .t-amber { fill: var(--tile-amber-fg); }
 .graph .t-teal { fill: var(--tile-teal-fg); } .graph .t-ink { fill: var(--tile-ink-fg); }
