@@ -3,6 +3,7 @@
 // The pages are written here, in this repo, and nowhere else: this build reads nothing from the other TraceFlow
 // repositories. A page is a Markdown file with a short header (title, label, order, tone, tagline, summary and
 // optional chips); the landing page and the navigation are made from those headers, so adding a file adds a page.
+import { createHash } from "node:crypto";
 import { cp, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -117,8 +118,8 @@ function layout({ slug, title, body, nav, toc = [], description = "" }) {
 ${description ? `<meta name="description" content="${esc(description)}">` : ""}
 <link rel="icon" type="image/png" href="assets/favicon-32.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<link rel="stylesheet" href="assets/style.css">
-<script src="assets/site.js" defer></script>
+<link rel="stylesheet" href="assets/style.css?v=${assetVersion.css}">
+<script src="assets/site.js?v=${assetVersion.js}" defer></script>
 </head>
 <body data-page="${slug}">
 <header class="top">
@@ -206,6 +207,11 @@ function landing(pages, nav, moduleCount) {
 </div>`;
   return layout({ slug: "index", title: "Overview", body, nav, description: "What TraceFlow does and the components it is made of." });
 }
+
+// Pages lets browsers cache files for ten minutes. Stamping each link with a hash of the file means a new page
+// never loads an old stylesheet or script.
+const hashOf = async (file) => createHash("sha1").update(await readFile(path.join(root, "assets", file))).digest("hex").slice(0, 8);
+const assetVersion = { css: await hashOf("style.css"), js: await hashOf("site.js") };
 
 const files = (await readdir(content)).filter((f) => f.endsWith(".md"));
 const pages = (await Promise.all(files.map(async (f) => parsePage(f, await readFile(path.join(content, f), "utf8"))))).sort((a, b) => a.order - b.order);
